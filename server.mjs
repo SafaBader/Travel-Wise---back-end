@@ -1,7 +1,8 @@
-import express from 'express';
-import dotenv from 'dotenv';
+import express from "express";
+import dotenv from "dotenv";
 import { connectToDatabase } from "./config/database.js";
-import placeRoutes from './routes/placesRoutes.js';
+import placeRoutes from "./routes/placesRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -13,15 +14,15 @@ app.use(express.json());
 
 // routes
 app.use("/places", placeRoutes);
-// app.use("/places", autenticateUser, placeRoutes);
+app.use("/users", userRoutes);
 
 try {
-    await connectToDatabase();
+  await connectToDatabase();
 
-    app.listen(PORT, () => {
-        console.log(`server connecting to ${PORT}`);
-    });
+  app.listen(PORT, () => {
+    console.log(`server connecting to ${PORT}`);
+  });
 } catch (error) {
-    console.error("failed to connect to db ", error);
-    process.exit(1);
+  console.error("failed to connect to db ", error);
+  process.exit(1);
 }

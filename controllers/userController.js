@@ -28,7 +28,7 @@ export const userLogin = async (req, res) => {
   }
 
   try {
-    const existingUser = await userisexists(email);
+    const existingUser = await User.findOne({ email });
 
     if (!existingUser) {
       return res.status(400).json({
@@ -60,16 +60,6 @@ export const userLogin = async (req, res) => {
   }
 };
 
-export const userisexists = async (email) => {
-  try {
-    const existingUser = await User.findOne({ email });
-    return !!existingUser; // Returns true if user exists, false otherwise
-  } catch (error) {
-    console.error("Error checking user existence:", error);
-    throw error; // Rethrow the error to be handled by the caller
-  }
-};
-
 export const createUser = async (req, res) => {
   if (!req.body.name || !req.body.email || !req.body.password) {
     return res.status(400).json({
@@ -79,8 +69,8 @@ export const createUser = async (req, res) => {
 
   try {
     const data = req.body;
-
-    if (await userisexists(data.email)) {
+    const userIsExist = await User.findOne({ email: data.email });
+    if (userIsExist) {
       return res.status(400).json({
         message: "User with this email already exists.",
       });

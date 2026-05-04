@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { connectToDatabase } from "./config/database.js";
 import placeRoutes from "./routes/placesRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import reviewRoutes from "./routes/reviewsRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.json());
 // routes
 app.use("/places", placeRoutes);
 app.use("/users", userRoutes);
+app.use("/reviews", reviewRoutes);
 
 try {
   await connectToDatabase();

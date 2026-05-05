@@ -2,11 +2,17 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { connectToDatabase } from "./config/database.js";
 import placeRoutes from './routes/placesRoutes.js';
+import cors from 'cors';
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
+// allow frontend requests
+// app.use(cors({
+//   origin: 'http://localhost:5173',
+// }));
+app.use(cors());
 // middleware
 app.use(express.json());
 // app.use(logger);

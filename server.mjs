@@ -1,8 +1,13 @@
-import express from 'express';
-import dotenv from 'dotenv';
+import express from "express";
+import dotenv from "dotenv";
 import { connectToDatabase } from "./config/database.js";
 import placeRoutes from './routes/placesRoutes.js';
 import cors from 'cors';
+import placeRoutes from "./routes/placesRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import reviewRoutes from "./routes/reviewsRoutes.js";
+import favouritesRoutes from "./routes/favouritesRoutes.js";
+import plansRoutes from "./routes/plansRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -18,16 +23,22 @@ app.use(express.json());
 // app.use(logger);
 
 // routes
+app.get("/", (req, res) => {
+  res.send("Welcome to the Travel Planner API");
+});
 app.use("/places", placeRoutes);
-// app.use("/places", autenticateUser, placeRoutes);
+app.use("/users", userRoutes);
+app.use("/reviews", reviewRoutes);
+app.use("/favourites", favouritesRoutes);
+app.use("/plans", plansRoutes);
 
 try {
-    await connectToDatabase();
+  await connectToDatabase();
 
-    app.listen(PORT, () => {
-        console.log(`server connecting to ${PORT}`);
-    });
+  app.listen(PORT, () => {
+    console.log(`server connecting to ${PORT}`);
+  });
 } catch (error) {
-    console.error("failed to connect to db ", error);
-    process.exit(1);
+  console.error("failed to connect to db ", error);
+  process.exit(1);
 }

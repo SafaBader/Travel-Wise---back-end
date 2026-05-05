@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import { connectToDatabase } from "./config/database.js";
 import placeRoutes from './routes/placesRoutes.js';
 import cors from 'cors';
-import placeRoutes from "./routes/placesRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import reviewRoutes from "./routes/reviewsRoutes.js";
 import favouritesRoutes from "./routes/favouritesRoutes.js";

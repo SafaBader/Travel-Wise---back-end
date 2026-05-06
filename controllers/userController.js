@@ -2,17 +2,69 @@ import bcrypt from "bcrypt";
 import User from "../models/userModel.js";
 import { generateToken } from "../middleware/authMiddleware.js";
 
+const sanitizeUser = (userDoc) => {
+  const { password, ...rest } = userDoc.toObject();
+  return rest;
+};
+
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find({});
-    const sanitizedUsers = users.map((userDoc) => {
-      const { password, ...rest } = userDoc.toObject();
-      return rest;
-    });
+    const sanitizedUsers = users.map(sanitizeUser);
     res.json(sanitizedUsers);
   } catch (error) {
     res.status(500).json({
       message: "Error fetching users",
+      error: error.message,
+    });
+  }
+};
+
+export const getCurrentUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+      });
+    }
+
+    res.json({
+      user: sanitizeUser(user),
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching current user",
+      error: error.message,
+    });
+  }
+};
+
+export const updateCurrentUser = async (req, res) => {
+  try {
+    const updates = {};
+    if (req.body.name !== undefined) updates.name = req.body.name;
+    if (req.body.bio !== undefined) updates.bio = req.body.bio;
+    if (req.body.avatar_url !== undefined) updates.avatar_url = req.body.avatar_url;
+
+    const user = await User.findByIdAndUpdate(req.user.id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+      });
+    }
+
+    res.json({
+      user: sanitizeUser(user),
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error updating current user",
       error: error.message,
     });
   }
@@ -44,12 +96,11 @@ export const userLogin = async (req, res) => {
       });
     }
 
-    const { password: _, ...userWithoutPassword } = userData.toObject();
     const token = generateToken(userData);
 
     res.json({
       message: "Login successful",
-      user: userWithoutPassword,
+      user: sanitizeUser(userData),
       token,
     });
   } catch (error) {
@@ -83,11 +134,10 @@ export const createUser = async (req, res) => {
     const newUser = new User(data);
     await newUser.save();
 
-    const { password: _, ...userWithoutPassword } = newUser.toObject();
     const token = generateToken(newUser);
 
     res.status(201).json({
-      ...userWithoutPassword,
+      user: sanitizeUser(newUser),
       token,
     });
   } catch (error) {

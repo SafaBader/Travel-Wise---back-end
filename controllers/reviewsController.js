@@ -36,8 +36,10 @@ export const createReview = async (req, res) => {
   try {
     const { placeId, rating, comment } = req.body;
     const userId = req.user.id;
-    if (!placeId || rating === undefined) {
-      return res.status(400).json({ message: "Place ID and Rating are required." });
+    if (!placeId || !userId || rating === undefined) {
+      return res.status(400).json({
+        message: "Place ID, User ID, and Rating are required.",
+      });
     }
     if (rating < 0 || rating > 5) {
       return res.status(400).json({ message: "Rating must be between 0 and 5." });

@@ -6,7 +6,7 @@ import cors from 'cors';
 import userRoutes from "./routes/userRoutes.js";
 import reviewRoutes from "./routes/reviewsRoutes.js";
 import favouritesRoutes from "./routes/favouritesRoutes.js";
-import plansRoutes from "./routes/plansRoutes.js";
+import tripsRoutes from "./routes/tripsRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -29,8 +29,8 @@ app.use("/places", placeRoutes);
 app.use("/users", userRoutes);
 app.use("/reviews", reviewRoutes);
 app.use("/favourites", favouritesRoutes);
-app.use("/plans", plansRoutes);
-
+app.use("/trips", tripsRoutes);
+app.use("/plans", tripsRoutes); //
 try {
   await connectToDatabase();
 

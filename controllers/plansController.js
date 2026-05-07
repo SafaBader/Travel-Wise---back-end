@@ -1,7 +1,7 @@
 import Plan from "../models/plansModel.js";
 
 export const getUserPlans = async (req, res) => {
-  const userId = req.user._id;
+  const userId = req.user.id;
   if (!userId) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -20,7 +20,7 @@ export const getUserPlans = async (req, res) => {
 };
 
 export const createPlan = async (req, res) => {
-  const userId = req.user._id;
+  const userId = req.user.id;
   if (!userId) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -36,7 +36,7 @@ export const createPlan = async (req, res) => {
 };
 
 export const addPlaceToPlan = async (req, res) => {
-  const userId = req.user._id;
+  const userId = req.user.id;
   if (!userId) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -62,7 +62,7 @@ export const addPlaceToPlan = async (req, res) => {
 };
 
 export const removePlaceFromPlan = async (req, res) => {
-  const userId = req.user._id;
+  const userId = req.user.id;
   if (!userId) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -87,7 +87,7 @@ export const removePlaceFromPlan = async (req, res) => {
 };
 
 export const deletePlan = async (req, res) => {
-  const userId = req.user._id;
+  const userId = req.user.id;
   if (!userId) {
     return res.status(401).json({ message: "Unauthorized" });
   }

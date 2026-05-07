@@ -32,6 +32,20 @@ export const getReviewById = async (req, res) => {
   }
 };
 
+export const getReviewsByPlaceId = async (req, res) => {
+  try {
+    const reviews = await Review.find({ placeId: req.params.placeId })
+      .populate("userId", "name")
+      .populate("placeId", "title");
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching reviews for place",
+      error: error.message,
+    });
+  }
+};
+
 export const createReview = async (req, res) => {
   try {
     const { placeId, rating, comment } = req.body;

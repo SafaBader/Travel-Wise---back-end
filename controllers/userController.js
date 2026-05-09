@@ -46,7 +46,8 @@ export const updateCurrentUser = async (req, res) => {
     const updates = {};
     if (req.body.name !== undefined) updates.name = req.body.name;
     if (req.body.bio !== undefined) updates.bio = req.body.bio;
-    if (req.body.avatar_url !== undefined) updates.avatar_url = req.body.avatar_url;
+    if (req.body.avatar_url !== undefined)
+      updates.avatar_url = req.body.avatar_url;
 
     const user = await User.findByIdAndUpdate(req.user.id, updates, {
       new: true,
@@ -131,7 +132,17 @@ export const createUser = async (req, res) => {
     const saltRounds = 10;
     data.password = await bcrypt.hash(data.password, saltRounds);
 
-    const newUser = new User(data);
+    // Only admin can set role, otherwise default to user
+    const userRole =
+      req.user && req.user.role === "admin" && data.role ? data.role : "user";
+
+    const newUser = new User({
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      bio: data.bio || "",
+      role: userRole,
+    });
     await newUser.save();
 
     const token = generateToken(newUser);

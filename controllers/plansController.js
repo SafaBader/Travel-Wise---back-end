@@ -6,9 +6,11 @@ export const getUserPlans = async (req, res) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
   try {
-    const plans = await Plan.find({ user: userId }).populate("places");
-    if (!plans) {
-      return res.status(404).json({ message: "No plans found for this user" });
+    const targetUser =
+      req.user.role === "admin" && req.query.userId ? req.query.userId : userId;
+    const plans = await Plan.find({ user: targetUser }).populate("places");
+    if (!plans || plans.length === 0) {
+      return res.status(404).json({ message: "No plans found." });
     }
     res.json(plans);
   } catch (error) {
@@ -25,7 +27,9 @@ export const createPlan = async (req, res) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
   try {
-    const plan = await Plan.create({ ...req.body, user: userId });
+    const targetUser =
+      req.user.role === "admin" && req.body.user ? req.body.user : userId;
+    const plan = await Plan.create({ ...req.body, user: targetUser });
     res.status(201).json(plan);
   } catch (error) {
     res.status(500).json({
@@ -43,7 +47,11 @@ export const addPlaceToPlan = async (req, res) => {
   try {
     const { planId } = req.params;
     const { placeId } = req.body;
-    const plan = await Plan.findOne({ _id: planId, user: userId });
+    const query = { _id: planId };
+    if (req.user.role !== "admin") {
+      query.user = userId;
+    }
+    const plan = await Plan.findOne(query);
     if (!plan) {
       return res.status(404).json({ message: "Plan not found" });
     }
@@ -67,9 +75,13 @@ export const removePlaceFromPlan = async (req, res) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
   try {
-    const planId = req.params;
-    const placeId = req.body;
-    const plan = await Plan.findOne({ _id: planId, user: userId });
+    const { planId } = req.params;
+    const { placeId } = req.body;
+    const query = { _id: planId };
+    if (req.user.role !== "admin") {
+      query.user = userId;
+    }
+    const plan = await Plan.findOne(query);
     if (!plan) {
       return res.status(404).json({ message: "Plan not found" });
     }
@@ -92,10 +104,11 @@ export const deletePlan = async (req, res) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
   try {
-    const deletedPlan = await Plan.findOneAndDelete({
-      _id: req.params.id,
-      user: userId,
-    });
+    const query = { _id: req.params.planId };
+    if (req.user.role !== "admin") {
+      query.user = userId;
+    }
+    const deletedPlan = await Plan.findOneAndDelete(query);
     if (!deletedPlan) {
       return res.status(404).json({ message: "Plan not found" });
     }

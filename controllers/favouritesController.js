@@ -1,8 +1,9 @@
 import Favourite from "../models/favouritesModel.js";
 
 export const addFavourite = async (req, res) => {
-  const { placeId } = req.body;
-  const userId = req.user.id;
+  const { placeId, userId: requestUserId } = req.body;
+  const userId =
+    req.user.role === "admin" && requestUserId ? requestUserId : req.user.id;
 
   try {
     if (!placeId || !userId) {
@@ -29,8 +30,9 @@ export const addFavourite = async (req, res) => {
 };
 
 export const removeFavourite = async (req, res) => {
-  const { placeId } = req.body;
-  const userId = req.user.id;
+  const { placeId, userId: requestUserId } = req.body;
+  const userId =
+    req.user.role === "admin" && requestUserId ? requestUserId : req.user.id;
 
   try {
     if (!placeId || !userId) {
@@ -57,7 +59,10 @@ export const removeFavourite = async (req, res) => {
 };
 
 export const getFavourites = async (req, res) => {
-  const userId = req.user.id;
+  const userId =
+    req.user.role === "admin" && req.query.userId
+      ? req.query.userId
+      : req.user.id;
   if (!userId) {
     return res.status(400).json({ message: "Missing required fields." });
   }

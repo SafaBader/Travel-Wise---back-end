@@ -6,11 +6,11 @@ import {
   userLogin,
   createUser,
 } from "../controllers/userController.js";
-import { authenticateUser } from "../middleware/authMiddleware.js";
+import { authenticateUser, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", getUsers);
+router.get("/", authenticateUser, authorize("user", "readAny"), getUsers);
 router.get("/me", authenticateUser, getCurrentUser);
 router.patch("/me", authenticateUser, updateCurrentUser);
 router.post("/login", userLogin);

@@ -30,7 +30,7 @@ app.use("/users", userRoutes);
 app.use("/reviews", reviewRoutes);
 app.use("/favourites", favouritesRoutes);
 app.use("/trips", tripsRoutes);
-app.use("/plans", tripsRoutes); //
+// app.use("/plans", tripsRoutes); //
 try {
   await connectToDatabase();
 
